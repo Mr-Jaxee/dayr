@@ -5,10 +5,6 @@ from flask import url_for
 from threading import Thread
 
 import os
-from dotenv import load_dotenv
-dotenv_path = os.path.join(os.path.dirname(__file__), '.secret')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 
 app = Flask('')
 

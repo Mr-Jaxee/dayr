@@ -10,7 +10,7 @@ keep_alive.keep_alive()
 client = commands.Bot(command_prefix = "!", intents = discord.Intents(messages = True, guild_messages = True, members = True, guilds = True))
 cluster = MongoClient("mongodb+srv://Jaxee:zB3DV6wTS24m6MH@cluster0.2pfpp.mongodb.net/dayr?retryWrites=true&w=majority")
 collection = cluster.dayr.dayrcoll
-
+client.remove_command('help')
 
 @client.event
 async def on_ready():
@@ -76,4 +76,4 @@ for filename in os.listdir("./cogs"):
 		client.load_extension(f"cogs.{filename[:-3]}")
 
 
-client.run("ODY5MTMzODk0ODQ5NTMxOTM0.YP5yBA.tjRgIt2LTKX5s4PSl4iFX6GImEc")
+client.run("ODY5MTMzODk0ODQ5NTMxOTM0.YP5yBA.UwtjGqVt5h-TXjirj9bC0rDHuyM")

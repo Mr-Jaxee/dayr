@@ -16,7 +16,10 @@ class moderation(commands.Cog):
 		emb = discord.Embed(title="Кик")
 		emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-		emb.add_field(name='Причина',value=reason,inline=False)
+		if reason == None:
+			emb.add_field(name='Причина',value="Не указана",inline=False)
+		else:
+			emb.add_field(name='Причина',value=reason,inline=False)
 		await member.kick()
 		await channel.send(embed = emb)
 	@command()
@@ -26,7 +29,10 @@ class moderation(commands.Cog):
 		emb = discord.Embed(title="Бан")
 		emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-		emb.add_field(name='Причина',value=reason,inline=False)
+		if reason == None:
+			emb.add_field(name='Причина',value="Не указана",inline=False)
+		else:
+			emb.add_field(name='Причина',value=reason,inline=False)
 		await member.ban()
 		await channel.send(embed = emb)
 	@command()
@@ -43,19 +49,22 @@ class moderation(commands.Cog):
 
 	@command()
 	@commands.has_permissions(view_audit_log=True)
-	async def мут(self, ctx,member:discord.Member,time:int,reason):
+	async def мут(self, ctx,member:discord.Member,time:int,reason=None):
 		role = discord.utils.get(ctx.guild.roles,id=872222214093676584)
 		channel = self.client.get_channel(869980383888965653)
 		await member.add_roles(role)
-		emb = discord.Embed(title="Мут",color=0x2f3136)
+		emb = discord.Embed(title="Мут")
 		emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-		emb.add_field(name='Причина',value=reason,inline=False)
+		if reason == None:
+			emb.add_field(name='Причина',value="Не указана",inline=False)
+		else:
+			emb.add_field(name='Причина',value=reason,inline=False)
 		emb.add_field(name="Время",value=time,inline=False)
 		await channel.send(embed = emb)
 		await asyncio.sleep(time*60 )
-		emb = discord.Embed(title="Анмут",color=0x2f3136)
-		emb.add_field(name='Модератор',value='<@709725675711496233>',inline=False)
+		emb = discord.Embed(title="Анмут")
+		emb.add_field(name='Модератор',value=ctx.author.mention,inline=False)
 		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
 		emb.add_field(name='Причина',value="Время мута вышло",inline=False)
 		await channel.send(embed=emb)
@@ -65,7 +74,7 @@ class moderation(commands.Cog):
 	async def размут(self, ctx,member:discord.Member):
 		channel = self.client.get_channel(869980383888965653)
 		muterole = discord.utils.get(ctx.guild.roles,id=872222214093676584)
-		emb = discord.Embed(title="Анмут",color=0xff0000)
+		emb = discord.Embed(title="Анмут")
 		emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
 		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
 		await channel.send(embed = emb)
@@ -75,30 +84,6 @@ class moderation(commands.Cog):
 	async def embed(self, ctx, *, text):
 		emb = discord.Embed(description=text)
 		await ctx.send(embed = emb)
-
-	@command()
-	@commands.has_permissions(view_audit_log=True)
-	async def варн(self, ctx,member:discord.Member, reason):
-		channel = self.client.get_channel(869980383888965653)
-		muterole = discord.utils.get(ctx.guild.roles,id=893132629107433533)
-		emb = discord.Embed(title="Предупреждение")
-		emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
-		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-		emb.add_field(name='Причина',value=reason,inline=False)
-		await channel.send(embed = emb)
-		await member.add_roles(muterole)
-
-	@command()
-	@commands.has_permissions(view_audit_log=True)
-	async def варн2(self, ctx,member:discord.Member, reason):
-		channel = self.client.get_channel(869980383888965653)
-		muterole = discord.utils.get(ctx.guild.roles,id=893132766978408468)
-		emb = discord.Embed(title="Предупреждение")
-		emb.add_field(name='Модератор',value=ctx.message.author.mention,inline=False)
-		emb.add_field(name='Нарушитель',value=member.mention,inline=False)
-		emb.add_field(name='Причина',value=reason,inline=False)
-		await channel.send(embed = emb)
-		await member.add_roles(muterole)
 
 def setup(client):
 	client.add_cog(moderation(client))
