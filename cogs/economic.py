@@ -3,12 +3,6 @@ from discord.ext import commands
 from pymongo import MongoClient
 import random
 
-"""
-1. balance -> вывод баланса пользователя
-2. pay -> перевод денег
-3. LVL-System
-"""
-
 class Economic(commands.Cog):
 
 	def __init__(self, client):
@@ -164,23 +158,6 @@ class Economic(commands.Cog):
 				self.collection.update_one({"_id": user.id},
 					{"$set": {"xp": data["xp"] + 25}})
 
-
-	@commands.command(
-		name = "баланс",
-		aliases = ["balance", "cash"],
-		brief = "Вывод баланса пользователя",
-		usage = "balance <@user>"
-	)
-	async def user_balance(self, ctx, member: discord.Member = None):
-		if member is None:
-			await ctx.send(embed = discord.Embed(
-				description = f"Баланс пользователя __{ctx.author}__: **{self.collection.find_one({'_id': ctx.author.id})['balance']}**"
-			))
-		else:
-			await ctx.send(embed = discord.Embed(
-				description = f"Баланс пользователя __{member}__: **{self.collection.find_one({'_id': member.id})['balance']}**"
-			))
-
 	@commands.command(
 		name = "уровень",
 		aliases = ["lvl"],
@@ -197,113 +174,6 @@ class Economic(commands.Cog):
 				description = f"Уровень пользователя __{member}__: **{self.collection.find_one({'_id': member.id})['lvl']}**, **{self.collection.find_one({'_id': member.id})['xp']}**"
 			))
 
-
-	@commands.command(
-		name = "перевод",
-		aliases = ["pay", "givecash"],
-		brief = "Перевод денег другому пользователю",
-		usage = "pay <@user> <amount>"	
-	)
-	async def pay_cash(self, ctx, member: discord.Member, amount: int):
-		ubalance = self.collection.find_one({"_id": ctx.author.id})["balance"]
-		mbalance = self.collection.find_one({"_id": member.id})["balance"]
-
-		if amount <= 0:
-			await ctx.send(embed = discord.Embed(
-				description = f"__{ctx.author}__, конечно извините меня, но проход хацкерам сегодня закрыт."
-			))
-		else:
-			self.collection.update_one({"_id": ctx.author.id},
-				{"$set": {"balance": ubalance - amount}})
-
-			self.collection.update_one({"_id": member.id},
-				{"$set": {"balance": mbalance + amount}})
-
-			await ctx.message.add_reaction("✅")
-
-	@commands.command(
-		name = "пополнить",
-		aliases = ["donate"],
-		brief = "Пополнить гризкоины",
-		usage = "donate <@user> <amount>"	
-	)
-	@commands.has_permissions(view_audit_log=True)
-	async def donate_cash(self, ctx, member: discord.Member, amount: int):
-		mbalance = self.collection.find_one({"_id": member.id})["balance"]
-
-		if amount <= 0:
-			await ctx.send(embed = discord.Embed(
-				description = f"__{ctx.author}__, конечно извините меня, но проход хацкерам сегодня закрыт."
-			))
-		else:
-
-			self.collection.update_one({"_id": member.id},
-				{"$set": {"balance": mbalance + amount}})
-
-			await ctx.message.add_reaction("✅")
-
-	@commands.command(
-		name = "снять",
-		aliases = ["undonate"],
-		brief = "Снять гризкоины",
-		usage = "undonate <@user> <amount>"	
-	)
-	@commands.has_permissions(view_audit_log=True)
-	async def undonate_cash(self, ctx, member: discord.Member, amount: int):
-		mbalance = self.collection.find_one({"_id": member.id})["balance"]
-
-		if amount <= 0:
-			await ctx.send(embed = discord.Embed(
-				description = f"__{ctx.author}__, конечно извините меня, но проход хацкерам сегодня закрыт."
-			))
-		else:
-
-			self.collection.update_one({"_id": member.id},
-				{"$set": {"balance": mbalance - amount}})
-
-			await ctx.message.add_reaction("✅")
-
-
-	@commands.command(
-		name = "казино",
-		aliases = ["casino"],
-		brief = "Сыграть в казино",
-		usage = "casino <cout>"	
-	)
-	async def casino(self, ctx, cout:int):
-		ubalance = self.collection.find_one({"_id": ctx.author.id})["balance"]
-		mbalance = self.collection.find_one({"_id": 869133894849531934})["balance"]
-		if ubalance >= cout and cout > 0:
-		
-			rand = int(random.randint(0,2))
-			
-			if rand == 0:
-				
-				self.collection.update_one({"_id": ctx.author.id},
-				{"$set": {"balance": ubalance - cout}})
-
-				self.collection.update_one({"_id": 869133894849531934},
-				{"$set": {"balance": mbalance + cout}})
-
-				await ctx.send(f"Вы проиграли {cout}")
-			
-			if rand == 1:
-			
-				await ctx.send("Вы остались при своих монетах")
-			
-			if rand == 2:
-			
-				await ctx.send("Вы выйграли")
-			
-				self.collection.update_one({"_id": ctx.author.id},
-				{"$set": {"balance": ubalance + cout}})
-
-				self.collection.update_one({"_id": 869133894849531934},
-				{"$set": {"balance": mbalance - cout}})
-		else:
-
-			await ctx.send('У вас недостаточно денег')
-
 	@commands.command(
 		name = "help",
 		aliases = ["помощь", "хелп"],
@@ -311,14 +181,39 @@ class Economic(commands.Cog):
 		usage = "!хелп"
 		)
 	async def help(self, ctx):
-		emb = discord.Embed(title="Список команды")
-		emb.add_field(name='Модерация',value=None,inline=False)
-		emb.add_field(name='Система уровней',value=None,inline=False)
+		emb = discord.Embed(title="Mr.Jax|Список Команд")
+		emb.add_field(name='Модерация',value='`бан`, `кик`, `мут`, `очистить`, `размут`, `embed`',inline=False)
+		emb.add_field(name='Система уровней',value='`уровень`, `лидеры`',inline=False)
+		emb.add_field(name='Развлечения',value='`demotivator`, `нюхать бебру`',inline=False)
+		emb.add_field(name='Системные',value='`load`, `unload`, `reload`',inline=False)
 		await ctx.send(embed = emb)
 
 	@commands.command()
 	async def test(self, ctx):
 		data = self.collection.find_one({"_id": ctx.author.id})
 		await ctx.send(f'{data}')
+
+	@commands.command(
+		name = "top",
+		aliases = ["топ", "лидеры"],
+		brief = "Показывает топ по уровню",
+		usage = "!лидеры"
+	)
+	async def top(self, ctx, iters = 13):
+		rows = self.collection.find(limit=iters).sort("lvl", -1) # получаем список с рейтингом по убыванию. collestionuser коллекция с пользователями (на свое замените). в дискорде бесконечно нельзя выводить текст, так что давайте ограничим число мест в выводе
+
+		count = 0
+
+		emb = discord.Embed(title='Mr.Jax|Лидеры')
+
+		for row in rows:
+			nam = ctx.guild.get_member(int(row["_id"])) # получаем имя
+			if nam == None: # если имя нельзя получить, т.е пользователь вышел с сервера, то пропускаем. Иначе вместо имени будет просто None
+				continue
+
+			lvl = row["lvl"] # получаем лвл
+			emb.add_field(name=f'#{str(count+1)}', value = f'{nam}: {lvl} уровень.', inline = False)
+			count += 1
+		await ctx.send(embed = emb)
 def setup(client):
 	client.add_cog(Economic(client))

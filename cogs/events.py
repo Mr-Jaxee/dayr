@@ -45,5 +45,6 @@ class events(commands.Cog):
 			await self.client.wait_for('voice_state_update', check=check)
 			await channel2.delete()
 
+
 def setup(client):
 	client.add_cog(events(client))
